@@ -30,14 +30,10 @@ class Storage:
         This method downloads a folder from an S3 bucket.
         :return: None
         """
-        files = [item["Key"] for item in self.client.list_objects_v2(Bucket=bucket, Prefix=source_folder)["Contents"]]
-        for file in files:
-            self.client.download_file(bucket, file, os.path.join(destination_folder, file))
+        pass
 
     def upload_folder(self, bucket, source_folder, destination_folder) -> None:
         """
         This method uploads a folder to an S3 bucket.
         """
-        for file in os.listdir(source_folder):
-            filename = os.path.join(source_folder, file)
-            self.client.upload_file(filename, bucket, os.path.join(destination_folder, file))
+        pass

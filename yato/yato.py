@@ -35,10 +35,7 @@ class RunContext:
         pattern = re.compile(r"\{\{\s*(\w+)\s*\}\}")
 
         def replace_match(match):
-            var_name = match.group(1)
-            if not self.fail_silently and os.getenv(var_name) is None:
-                raise ValueError(f"Environment variable {var_name} is not set.")
-            return os.getenv(var_name)
+            pass
 
         return pattern.sub(replace_match, sql)
 
@@ -95,47 +92,20 @@ class Yato:
         Returns a boto3 S3 client if the S3 credentials are provided. Otherwise, returns None.
         :return: object or None
         """
-        if self.s3_access_key and self.s3_secret_key and self.s3_bucket:
-            return Storage(
-                s3_access_key=self.s3_access_key,
-                s3_secret_key=self.s3_secret_key,
-                s3_endpoint_url=self.s3_endpoint_url,
-                s3_region_name=self.s3_region_name,
-            )
-        return None
+        pass
 
     def restore(self, overwrite=False) -> None:
         """
         Restores the DuckDB database from the S3 bucket.
         :param overwrite: If True, it will overwrite the existing database. Default is False.
         """
-        logger.info(f"Restoring the DuckDB database from {self.s3_bucket}/{self.db_folder_name}...")
-        with tempfile.TemporaryDirectory() as tmp_dirname:
-            local_db_path = os.path.join(tmp_dirname, self.db_folder_name)
-
-            os.mkdir(local_db_path)
-            self.storage.download_folder(self.s3_bucket, self.db_folder_name, tmp_dirname)
-
-            if overwrite and os.path.exists(self.database_path):
-                logger.info(f"Overwrite activated. Removed {self.database_path}.")
-                os.remove(self.database_path)
-
-            con = duckdb.connect(self.database_path)
-            con.sql(f"IMPORT DATABASE '{local_db_path}'")
-        logger.info("Done.")
+        pass
 
     def backup(self) -> None:
         """
         Backups the DuckDB database to the S3 bucket.
         """
-        logger.info(f"Backing up the DuckDB database to {self.s3_bucket}/{self.db_folder_name}...")
-        with tempfile.TemporaryDirectory() as tmp_dirname:
-            local_db_path = os.path.join(tmp_dirname, self.db_folder_name)
-
-            con = duckdb.connect(self.database_path)
-            con.sql(f"EXPORT DATABASE '{local_db_path}' (FORMAT 'parquet')")
-            self.storage.upload_folder(self.s3_bucket, local_db_path, self.db_folder_name)
-        logger.info("Done.")
+        pass
 
     def get_execution_order(self, dependencies):
         ts = TopologicalSorter({d: dependencies[d].deps for d in dependencies})
